@@ -1,16 +1,75 @@
-# plant_library_app
+📱 ỨNG DỤNG TRA CỨU CÂY TRỒNG – MOBILE APP (FLUTTER)
 
-A new Flutter project.
+Ứng dụng được phát triển nhằm hỗ trợ người dùng, đặc biệt là người nông dân, tra cứu nhanh thông tin các loại cây trồng dựa trên dữ liệu từ hệ thống MediaWiki – Wikicrop của Bộ môn/Khoa.
+App được xây dựng bằng Flutter, chạy được trên Android / iOS.
 
-## Getting Started
+📥 1. Hướng dẫn tải về và chạy trên máy của thầy
+🔧 Yêu cầu trước khi chạy
 
-This project is a starting point for a Flutter application.
+Thầy cần chuẩn bị:
 
-A few resources to get you started if this is your first Flutter project:
+Flutter SDK (phiên bản từ 3.x trở lên)
+https://docs.flutter.dev/get-started/install
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Android Studio hoặc VS Code
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Một thiết bị Android hoặc Android Emulator
+
+📂 2. Cách tải mã nguồn từ GitHub
+
+Thầy có thể tải theo 2 cách:
+
+📌 Cách 1 — Tải file ZIP (đơn giản nhất)
+
+Truy cập GitHub Repository:
+👉 [điền link GitHub của bạn vào đây]
+
+Nhấn nút màu xanh Code
+
+Chọn Download ZIP
+
+Giải nén file ZIP
+
+Mở thư mục dự án bằng VS Code hoặc Android Studio
+
+📌 Cách 2 — Clone bằng Git
+
+Nếu thầy đã cài Git, chỉ cần mở Terminal và gõ:
+
+git clone https://github.com/<username>/<repo>.git
+
+
+Ví dụ:
+
+git clone https://github.com/hovanhondbs/APP_WIKICROP.git
+
+▶️ 3. Chạy dự án trên máy
+
+Sau khi thầy mở dự án:
+
+Mở Terminal trong VS Code
+
+Chạy:
+
+flutter pub get
+
+
+Kết nối điện thoại Android (bật Debug Mode) hoặc mở Emulator
+
+Chạy lệnh:
+
+flutter run
+
+
+Ứng dụng sẽ khởi động và hiển thị giao diện chính.
+
+🌐 4. API hệ thống sử dụng
+
+action=query&list=search: Tìm bài viết theo từ khóa
+
+action=parse&prop=text|images: Lấy nội dung HTML và danh sách ảnh
+
+action=query&prop=imageinfo: Lấy link ảnh gốc
+
+Toàn bộ dữ liệu được đồng bộ trực tiếp từ:
+👉 http://wikicrop.ctu.edu.vn:8080
