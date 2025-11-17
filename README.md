@@ -65,5 +65,4 @@ action=parse&prop=text|images: Lấy nội dung HTML và danh sách ảnh
 
 action=query&prop=imageinfo: Lấy link ảnh gốc
 
-Toàn bộ dữ liệu được đồng bộ trực tiếp từ:
--> http://wikicrop.ctu.edu.vn:8080
+
