@@ -4,11 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:http/http.dart' as http;
 
-import 'config.dart'; // <-- Lấy config từ config.json
+import 'config.dart';
+import 'api_config_page.dart'; // ← thêm import trang cấu hình API
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AppConfig.load(); // Load API từ config.json
+  await AppConfig.load();
   runApp(MyApp());
 }
 
@@ -58,7 +59,6 @@ Future<Map<String, dynamic>?> fetchPlantContent(String title) async {
 
   try {
     final res = await http.get(Uri.parse(url));
-
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body);
       return data["parse"];
@@ -155,6 +155,19 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(
               fontWeight: FontWeight.bold, color: Colors.green, fontSize: 22),
         ),
+
+        // ⭐⭐⭐ Thêm nút cấu hình API (⚙️)
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings, color: Colors.green),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ApiConfigPage()),
+              );
+            },
+          )
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
@@ -171,21 +184,14 @@ class _HomePageState extends State<HomePage> {
                     OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
-
             SizedBox(height: 12),
-
             ElevatedButton.icon(
               onPressed: handleSearch,
               icon: Icon(Icons.search),
               label: Text("Tìm kiếm"),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
             ),
-
             SizedBox(height: 20),
-
-            ////////////////////////////////////////////////////////////////
-            // Xem gần đây
-            ////////////////////////////////////////////////////////////////
             if (recentViewed.isNotEmpty) ...[
               Text("Xem gần đây",
                   style: TextStyle(
@@ -229,18 +235,12 @@ class _HomePageState extends State<HomePage> {
               ),
               SizedBox(height: 20),
             ],
-
-            ////////////////////////////////////////////////////////////////
-            // DANH MỤC
-            ////////////////////////////////////////////////////////////////
             Text("Danh mục cây trồng",
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.green)),
-
             SizedBox(height: 10),
-
             ...categories.entries.map((entry) {
               return Card(
                 color: Colors.green[50],
@@ -303,7 +303,6 @@ class _ResultPageState extends State<ResultPage> {
     load();
   }
 
-  // Xóa toàn bộ "sửa | sửa mã nguồn"
   String cleanHtml(String html) {
     html = html.replaceAll(
         RegExp(r'<span class="mw-editsection"[\s\S]*?<\/span>'), "");
