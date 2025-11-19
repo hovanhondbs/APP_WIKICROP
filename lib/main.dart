@@ -1,9 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:http/http.dart' as http;
 
-void main() {
+import 'config.dart'; // <-- Lấy config từ config.json
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppConfig.load(); // Load API từ config.json
   runApp(MyApp());
 }
 
@@ -14,8 +19,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Tra cứu cây trồng",
       theme: ThemeData(
-        primaryColor: Colors.green[700],
-        scaffoldBackgroundColor: const Color(0xFFF8FBEF),
+        primaryColor: Colors.green,
+        scaffoldBackgroundColor: Color(0xFFF8FBEF),
       ),
       home: HomePage(),
     );
@@ -28,7 +33,7 @@ class MyApp extends StatelessWidget {
 
 Future<String?> searchPageTitle(String keyword) async {
   final url =
-      "http://wikicrop.ctu.edu.vn:8080/api.php?action=query&list=search&format=json&srsearch=$keyword";
+      "${AppConfig.instance.apiBase}?action=query&list=search&format=json&srsearch=$keyword";
 
   try {
     final res = await http.get(Uri.parse(url));
@@ -49,7 +54,7 @@ Future<String?> searchPageTitle(String keyword) async {
 
 Future<Map<String, dynamic>?> fetchPlantContent(String title) async {
   final url =
-      "http://wikicrop.ctu.edu.vn:8080/api.php?action=parse&page=$title&format=json&prop=text|images";
+      "${AppConfig.instance.apiBase}?action=parse&page=$title&format=json&prop=text|images";
 
   try {
     final res = await http.get(Uri.parse(url));
@@ -71,7 +76,7 @@ Future<Map<String, dynamic>?> fetchPlantContent(String title) async {
 
 Future<String?> getImageUrl(String fileName) async {
   final url =
-      "http://wikicrop.ctu.edu.vn:8080/api.php?action=query&titles=File:$fileName&prop=imageinfo&iiprop=url&format=json";
+      "${AppConfig.instance.apiBase}?action=query&titles=File:$fileName&prop=imageinfo&iiprop=url&format=json";
 
   try {
     final res = await http.get(Uri.parse(url));
@@ -105,17 +110,12 @@ class _HomePageState extends State<HomePage> {
   final categories = {
     "Ngũ cốc (Cereal Crops)": ["Lúa", "Lúa mì", "Ngô", "Lúa miến"],
     "Các loại kê (Millet Crops)": ["Kê Ý", "Kê nhỏ"],
-    "Cây họ đậu (Pulse Crops)": ["Đậu xanh", "Đậu tương", "Đậu đen"],
-    "Cây dầu ăn (Edible Oilseed Crops)": ["Đậu phộng", "Vừng", "Cải dầu"],
-    "Cây dầu không ăn được": ["Thầu dầu"],
-    "Cây lấy sợi": ["Bông vải", "Đay"],
-    "Cây thức ăn chăn nuôi": ["Cỏ voi"],
+    "Cây họ đậu": ["Đậu xanh", "Đậu tương", "Đậu đen"],
+    "Cây dầu ăn": ["Đậu phộng", "Vừng", "Cải dầu"],
     "Cây lấy đường": ["Mía", "Củ cải đường"],
     "Cây củ": ["Khoai tây", "Sắn"],
-    "Cây kích thích": ["Thuốc lá"],
-    "Cây dược liệu": ["Sâm Ấn Độ", "Sả"],
-    "Cây hương liệu": ["Bạc hà"],
-    "Cây ăn quả nhiệt đới": ["Chuối", "Xoài", "Mít", "Ổi"],
+    "Cây ăn quả": ["Chuối", "Xoài", "Mít", "Ổi"],
+    "Cây khác": ["Bắp"],
   };
 
   void saveRecent(String name) {
@@ -161,7 +161,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ô nhập
             TextField(
               controller: searchController,
               onSubmitted: (_) => handleSearch(),
@@ -184,7 +183,9 @@ class _HomePageState extends State<HomePage> {
 
             SizedBox(height: 20),
 
+            ////////////////////////////////////////////////////////////////
             // Xem gần đây
+            ////////////////////////////////////////////////////////////////
             if (recentViewed.isNotEmpty) ...[
               Text("Xem gần đây",
                   style: TextStyle(
@@ -229,7 +230,9 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 20),
             ],
 
+            ////////////////////////////////////////////////////////////////
             // DANH MỤC
+            ////////////////////////////////////////////////////////////////
             Text("Danh mục cây trồng",
                 style: TextStyle(
                     fontSize: 18,
@@ -300,7 +303,7 @@ class _ResultPageState extends State<ResultPage> {
     load();
   }
 
-  // xoá toàn bộ "sửa | sửa mã nguồn"
+  // Xóa toàn bộ "sửa | sửa mã nguồn"
   String cleanHtml(String html) {
     html = html.replaceAll(
         RegExp(r'<span class="mw-editsection"[\s\S]*?<\/span>'), "");
@@ -325,13 +328,12 @@ class _ResultPageState extends State<ResultPage> {
       return;
     }
 
-    // load ảnh
     List images = data["images"];
     imageUrls = [];
 
     for (var name in images) {
-      if (name.toString().toLowerCase().endsWith(".jpg") ||
-          name.toString().toLowerCase().endsWith(".png")) {
+      if (name.toLowerCase().endsWith(".jpg") ||
+          name.toLowerCase().endsWith(".png")) {
         final url = await getImageUrl(name);
         if (url != null) imageUrls.add(url);
       }
