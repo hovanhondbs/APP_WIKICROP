@@ -65,7 +65,7 @@ action=parse&prop=text|images: Lấy nội dung HTML và danh sách ảnh
 
 action=query&prop=imageinfo: Lấy link ảnh gốc
 
-GHI CHÚ: ✅ Câu lệnh build APK Release (chuẩn để đóng gói)
+✅ Câu lệnh build APK Release
 
 flutter clean
 
