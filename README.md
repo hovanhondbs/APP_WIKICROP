@@ -65,4 +65,11 @@ action=parse&prop=text|images: Lấy nội dung HTML và danh sách ảnh
 
 action=query&prop=imageinfo: Lấy link ảnh gốc
 
+GHI CHÚ: ✅ Câu lệnh build APK Release (chuẩn để đóng gói)
+flutter clean
+flutter pub get
+flutter build apk --release
+
+File APK sau khi build nằm tại:
+build/app/outputs/apk/release/app-release.apk
 
